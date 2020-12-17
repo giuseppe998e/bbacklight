@@ -1,6 +1,7 @@
-<p align="center"><img src="images/logo.svg"></p>
+<p align="center"><img alt="Logo" src="images/logo.svg"></p>
 <hr>
 <h4 align="center">When xbacklight doesn't want to collaborate</h4>
+<p align="center"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/giuseppe998e/bbacklight/Shellcheck?style=flat-square">  <img alt="GitHub" src="https://img.shields.io/github/license/giuseppe998e/bbacklight?style=flat-square"></p>
 <br>
 
 `bbacklight` is a command line utility, written in the POSIX shell language, created to overcome the problem of the more famous `xbacklight` which on some devices does not work as it should.  
