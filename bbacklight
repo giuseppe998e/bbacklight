@@ -43,7 +43,6 @@ Usage: bbacklight <command>
   -d <device>
       Choose which device to change the brightness or request the current value
       Default device is 'acpi_video0'
-
 EOF
   exit 0
 }
@@ -89,10 +88,9 @@ val_to_use() {
 }
 
 get_bright() {
-
   if [ "$1" != "raw" ]; then
-    # FIXME Shows the current percentage of brightness (rounded down)
-    echo "~$(( "$ACT_BRIGHT" * 100 / "$MAX_BRIGHT" ))%"
+    # FIXME Shows the current percentage of brightness (rounded down) with fake decimals
+    echo "$(( "$ACT_BRIGHT" * 100 / "$MAX_BRIGHT" )).00000"
   else
     echo "$ACT_BRIGHT"
   fi
