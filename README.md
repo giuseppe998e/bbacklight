@@ -26,7 +26,7 @@ Where `<device>` should be replaced with the device you want to use (ex. `acpi_v
 
 ### Git
 ```shell
-$ curl -L "https://github.com/giuseppe998e/bbacklight/blob/main/bbacklight" > bbacklight && chmod +x bbacklight
+$ curl -L "https://git.io/bbacklight" > bbacklight && chmod +x bbacklight
 $ sudo mv bbacklight /usr/bin/
 ```
 
