@@ -1,0 +1,206 @@
+#!/usr/bin/env sh
+#-------------------------------------------------#
+# bbacklight Copyright (C) 2020 Giuseppe Eletto   #
+# This program comes with ABSOLUTELY NO WARRANTY. #
+# This is free software, and you are welcome      #
+# to redistribute it under certain conditions.    #
+#-------------------------------------------------#
+
+# ------------------------
+# Constants
+# ------------------------
+
+VERSION=1.0.0
+
+FILE_MAX_VAL="max_brightness"
+FILE_VAL="brightness"
+
+DEF_SYS_BL="/sys/class/backlight"
+DEF_DEVICE="acpi_video0"
+
+
+# ------------------------
+# Functions
+# ------------------------
+
+print_help() {
+  cat <<EOF
+Usage: bbacklight <command>
+  where <command> are:
+  -help
+      Show this help text
+  -version
+      Show version
+  -get [raw]
+      Show the current brightness percentage (rounded down)
+      If 'raw' is provided, it shows current brightness value
+  -inv <percentage> (w/o % symbol)
+      Increase the brightness by a percentage value decided by the user
+  -dec <percentage> (w/o % symbol)
+      Decrease the brightness by a percentage value decided by the user
+  -set <percentage> (w/o % symbol)
+      Set the brightness to a percentage value decided by the user
+  -d <device>
+      Choose which device to change the brightness or request the current value
+      Default device is 'acpi_video0'
+
+EOF
+  exit 0
+}
+
+print_error() {
+  printf "%s\n" "Error: $1" >&2
+  exit 1
+}
+
+check_perms() {
+  if [ ! -d "$1" ]; then
+    print_error "Path '$1' not found"
+  fi
+
+  if [ ! -r "$1/$FILE_MAX_VAL" ]; then
+    print_error "File '$1/$FILE_MAX_VAL' does not have read permissions"
+  fi
+
+  if [ ! -r "$1/$FILE_VAL" ]; then
+    print_error "File '$1/$FILE_VAL' does not have read permissions"
+  fi
+
+  if [ ! -w "$1/$FILE_VAL" ]; then
+    print_error "File '$1/$FILE_VAL' does not have write permissions"
+  fi
+}
+
+max_bright() {
+  MAX_BRIGHT="$(cat "$1/$FILE_MAX_VAL")"
+}
+
+act_bright() {
+  ACT_BRIGHT="$(cat "$1/$FILE_VAL")"
+}
+
+val_to_use() {
+  if [ "$1" -gt 100 ] || [ "$1" -lt 0 ]; then
+    print_error "Possible values are 0 ... 100"
+  fi
+
+  # FIXME $MAX_BRIGHT values less than 100 returns float
+  echo "$(( "$1" * "$MAX_BRIGHT" / 100 ))"
+}
+
+get_bright() {
+
+  if [ "$1" != "raw" ]; then
+    # FIXME Shows the current percentage of brightness (rounded down)
+    echo "~$(( "$ACT_BRIGHT" * 100 / "$MAX_BRIGHT" ))%"
+  else
+    echo "$ACT_BRIGHT"
+  fi
+}
+
+inc_bright() {
+  CALC_VAL="$( val_to_use "$1" )"
+  MAX_VAL="$(( "$MAX_BRIGHT" - "$ACT_BRIGHT" ))"
+
+  if [ "$MAX_VAL" -le 0 ]; then
+    print_error "Max value reached"
+  elif [ "$CALC_VAL" -gt "$MAX_VAL" ]; then
+    CALC_VAL="$MAX_VAL"
+  fi
+
+  echo "$(( "$ACT_BRIGHT" + "$CALC_VAL" ))" > "$DBP/$FILE_VAL"
+}
+
+dec_bright() {
+  CALC_VAL="$( val_to_use "$1" )"
+
+  if [ "$ACT_BRIGHT" -le 0 ]; then
+    print_error "Min value reached"
+  elif [ "$CALC_VAL" -lt "$ACT_BRIGHT" ]; then
+    echo "$(( "$ACT_BRIGHT" - "$CALC_VAL" ))" > "$DBP/$FILE_VAL"
+  else
+    echo "0" > "$DBP/$FILE_VAL"
+  fi
+}
+
+set_bright() {
+  val_to_use "$1" > "$DBP/$FILE_VAL"
+}
+
+main() {
+  DBP="$DEF_SYS_BL/$DEF_DEVICE" # Set global var DBP (default)
+
+  WTD=0  # What To Do
+  ARG=-1 # Flag's Argument (if any)
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      -get)
+        WTD=1
+
+        if [ -n "$2" ] && [ "$(printf '%s' "$2" | cut -c 1)" != "-" ]; then
+          ARG="$2"
+          shift
+        fi
+      ;;
+      -inc)
+        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+          print_error "Argument for '$1' is missing"
+        fi
+
+        WTD=2
+        ARG="$2"
+        shift
+      ;;
+      -dec)
+        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+          print_error "Argument for '$1' is missing"
+        fi
+
+        WTD=3
+        ARG="$2"
+        shift
+      ;;
+      -set)
+        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+          print_error "Argument for '$1' is missing"
+        fi
+        
+        WTD=4
+        ARG="$2"
+        shift
+      ;;
+      -d)
+        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+          print_error "Argument for '$1' is missing"
+        fi
+        
+        DBP="$DEF_SYS_BL/$2" # Set global var DBP (custom)
+        shift
+      ;;
+      -help);;
+      -version) echo $VERSION; exit 0;;
+      -?*) print_error "Unknown flag '$1'";;
+      *) break;;
+    esac
+    shift
+  done
+
+  if [ "$WTD" -eq 0 ]; then
+    print_help
+  fi
+
+  check_perms "$DBP" # Checks SYS permissions
+
+  max_bright "$DBP"  # Sets global var MAX_BRIGHT
+  act_bright "$DBP"  # Sets global var ACT_BRIGHT
+
+  case "$WTD" in
+    1) get_bright "$ARG";;
+    2) inc_bright "$ARG";;
+    3) dec_bright "$ARG";;
+    4) set_bright "$ARG";;
+  esac
+}
+
+main "$@"
