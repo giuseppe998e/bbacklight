@@ -3,11 +3,9 @@
 <h4 align="center">When xbacklight doesn't want to collaborate</h4>
 <br>
 
-`bbacklight` is a command line utility written in the POSIX shell language created to overcome the problem of the more famous `xbacklight` which on some devices does not work as it should.  
+`bbacklight` is a command line utility, written in the POSIX shell language, created to overcome the problem of the more famous `xbacklight` which on some devices does not work as it should.  
 This is why `bbacklight` was written trying to keep compatibility with `xbacklight` as much as possible.  
 
-<br>
-<br>
 <br>
 
 ## Dependencies
