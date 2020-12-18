@@ -24,7 +24,7 @@ DEF_DEVICE="acpi_video0"
 # Secondary Functions
 # ------------------------
 
-print_help() {
+show_help() {
   cat <<EOF
 Usage: bbacklight <command>
   where <command> are:
@@ -163,7 +163,7 @@ done
 
 # Show help text if no action was chosen (or -help)
 if [ -z "$WTD" ]; then
-  print_help
+  show_help
 fi
 
 # Check SYS permissions
