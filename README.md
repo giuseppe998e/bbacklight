@@ -1,4 +1,8 @@
-<p align="center"><img alt="Logo" src="images/logo.svg"></p>
+<p align="center">
+  <a href="#readme">
+    <img alt="Logo" src="images/logo.svg">
+  </a>
+</p>
 <hr>
 <h4 align="center">When xbacklight doesn't want to collaborate</h4>
 <p align="center">
@@ -16,6 +20,7 @@
 
 `bbacklight` is a command line utility, written in the POSIX shell language, created to overcome the problem of the more famous `xbacklight` which on some devices does not work as it should.  
 This is why `bbacklight` was written trying to keep compatibility with `xbacklight` as much as possible.  
+
 
 ## Dependencies
 - `gnu-coreutils` or `busybox`
