@@ -128,7 +128,7 @@ get_param_arg() {
 
 
 # ------------------------
-# Main "function"
+# Main "Function"
 # ------------------------
 
 trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
@@ -175,10 +175,10 @@ if [ -z "$WTD" ]; then
   print_help
 fi
 
-check_perms "$DBP" # Checks SYS permissions
+check_perms "$DBP" # Check SYS permissions
 
-MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")" # Sets global var MAX_BRIGHT
-ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     # Sets global var ACT_BRIGHT
+MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")" # Set global var MAX_BRIGHT
+ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     # Set global var ACT_BRIGHT
 
 case "$WTD" in
   1) get_bright "$ARG";;
