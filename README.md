@@ -1,21 +1,20 @@
 <p align="center"><img alt="Logo" src="images/logo.svg"></p>
 <hr>
 <h4 align="center">When xbacklight doesn't want to collaborate</h4>
-<p align="center"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/giuseppe998e/bbacklight/Shellcheck?style=flat-square">  <img alt="GitHub" src="https://img.shields.io/github/license/giuseppe998e/bbacklight?style=flat-square"></p>
+<p align="center"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/giuseppe998e/bbacklight/Shellcheck?style=flat-square"> <img alt="GitHub" src="https://img.shields.io/github/license/giuseppe998e/bbacklight?style=flat-square"> <p align="center"><a href="https://github.com/giuseppe998e/bbacklight/actions?query=workflow%3AShellcheck"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/giuseppe998e/bbacklight/Shellcheck?style=flat-square"></a>  <a href="https://github.com/giuseppe998e/bbacklight/blob/main/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/giuseppe998e/bbacklight?style=flat-square"></a></p></p>
 <br>
 
 `bbacklight` is a command line utility, written in the POSIX shell language, created to overcome the problem of the more famous `xbacklight` which on some devices does not work as it should.  
 This is why `bbacklight` was written trying to keep compatibility with `xbacklight` as much as possible.  
 
-<br>
-
 ## Dependencies
-Only GNU `coreutils`
+- `gnu-coreutils` or `busybox`
+- `curl` or `wget` (*optional*)
 
 
 ## Installation
 ### Prerequisite
-```shell
+```console
 $ sudo groupadd bbacklight
 $ echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"<device>\", RUN+=\"/bin/chgrp bbacklight /sys/class/backlight/%k/brightness\"" | sudo tee -a /etc/udev/rules.d/bbacklight.rules
 $ echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"<device>\", RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\"" | sudo tee -a /etc/udev/rules.d/bbacklight.rules
@@ -25,14 +24,14 @@ $ sudo udevadm control --reload-rules && sudo udevadm trigger # or reboot
 Where `<device>` should be replaced with the device you want to use (ex. `acpi_video0` or `intel_backlight`).
 
 ### Git
-```shell
+```console
 $ curl -L "https://git.io/bbacklight" > bbacklight && chmod +x bbacklight
 $ sudo mv bbacklight /usr/bin/
 ```
 
 
 ## Usage
-```
+```console
 $ bbacklight -help
 Usage: bbacklight <command>
   where <command> are:
@@ -40,9 +39,10 @@ Usage: bbacklight <command>
       Show this help text
   -version
       Show version
+      And, possibly, if a different version is available on GitHub
   -get [raw]
       Show the current brightness percentage (rounded down)
-      If 'raw' is provided, it shows current brightness value
+      If 'raw' is provided, it shows the current brightness value
   -inv <percentage> (w/o % symbol)
       Increase the brightness by a percentage value decided by the user
   -dec <percentage> (w/o % symbol)
