@@ -11,6 +11,7 @@
 # ------------------------
 
 VERSION=1.0.1
+PROCESS=$$
 
 FILE_MAX_VAL="max_brightness"
 FILE_VAL="brightness"
@@ -49,7 +50,7 @@ EOF
 
 print_error() {
   printf "%s\n" "Error: $1" >&2
-  exit 1
+  kill -10 $PROCESS
 }
 
 check_perms() {
@@ -131,6 +132,7 @@ main() {
   WTD=0  # What To Do
   ARG=-1 # Flag's Argument (if any)
 
+trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
   while [ "$#" -gt 0 ]; do
     case "$1" in
       -get)
