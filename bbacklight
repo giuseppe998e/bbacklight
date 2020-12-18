@@ -48,6 +48,24 @@ EOF
   exit 0
 }
 
+show_version() {
+  if command -v curl > /dev/null 2>&1; then
+    GH_VER="$( curl -sH "Accept: application/vnd.github.v3+json" https://api.github.com/repos/giuseppe998e/bbacklight/tags )"
+  elif command -v wget > /dev/null 2>&1; then
+    GH_VER="$( wget --header "Accept: application/vnd.github.v3+json" -qO- https://api.github.com/repos/giuseppe998e/bbacklight/tags )"
+  fi
+
+  GH_VER="$(echo "$GH_VER" | grep -oE "\"name\": \".+\"" | head -1 | grep -oE "[0-9|\.]+" )"
+
+  if [ "$GH_VER" != "$VERSION" ]; then
+    echo "$VERSION (Different version available: $GH_VER)"
+  else
+    echo "$VERSION"
+  fi
+  
+  exit 0
+}
+
 print_error() {
   printf "%s\n" "Error: $1" >&2
   kill -10 $PROCESS
@@ -154,7 +172,7 @@ while [ "$#" -gt 0 ]; do
       shift
     ;;
     -help);;
-    -version) echo $VERSION; exit 0;;
+    -version) show_version;;
     -?*) print_error "Unknown flag '$1'";;
     *) break;;
   esac
@@ -187,7 +205,7 @@ fi
 MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")"
 
 # Set global var ACT_BRIGHT
-ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     
+ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"
 
 # Perform the desired action
 case "$WTD" in
