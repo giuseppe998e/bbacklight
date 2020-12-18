@@ -21,7 +21,7 @@ DEF_DEVICE="acpi_video0"
 
 
 # ------------------------
-# Functions
+# Secondary Functions
 # ------------------------
 
 print_help() {
@@ -53,22 +53,12 @@ print_error() {
   kill -10 $PROCESS
 }
 
-check_perms() {
-  if [ ! -d "$1" ]; then
-    print_error "Path '$1' not found"
+get_param_arg() {
+  if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+    print_error "Argument for '$1' flag is missing"
   fi
 
-  if [ ! -r "$1/$FILE_MAX_VAL" ]; then
-    print_error "File '$1/$FILE_MAX_VAL' does not have read permissions"
-  fi
-
-  if [ ! -r "$1/$FILE_VAL" ]; then
-    print_error "File '$1/$FILE_VAL' does not have read permissions"
-  fi
-
-  if [ ! -w "$1/$FILE_VAL" ]; then
-    print_error "File '$1/$FILE_VAL' does not have write permissions"
-  fi
+  echo "$2"
 }
 
 val_to_use() {
@@ -79,6 +69,11 @@ val_to_use() {
   # FIXME $MAX_BRIGHT values less than 100 returns float
   echo "$(( "$1" * "$MAX_BRIGHT" / 100 ))"
 }
+
+
+# ------------------------
+# Primary Functions
+# ------------------------
 
 get_bright() {
   if [ "$1" != "raw" ]; then
@@ -118,23 +113,18 @@ set_bright() {
   val_to_use "$1" > "$DBP/$FILE_VAL"
 }
 
-get_param_arg() {
-  if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
-    print_error "Argument for '$1' flag is missing"
-  fi
-
-  echo "$2"
-}
-
 
 # ------------------------
 # Main "Function"
 # ------------------------
 
-trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
+# Execute "exit 1" when SIGUSR1
+trap "exit 1" USR1 
 
-DBP="$DEF_SYS_BL/$DEF_DEVICE" # Set global var DBP (default)
+# Set global var DBP (default)
+DBP="$DEF_SYS_BL/$DEF_DEVICE"
 
+# Custom "getopts" for params management
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -get)
@@ -171,15 +161,35 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+# Show help text if no action was chosen (or -help)
 if [ -z "$WTD" ]; then
   print_help
 fi
 
-check_perms "$DBP" # Check SYS permissions
+# Check SYS permissions
+if [ ! -d "$DBP" ]; then
+  print_error "Path '$DBP' not found"
+fi
 
-MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")" # Set global var MAX_BRIGHT
-ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     # Set global var ACT_BRIGHT
+if [ ! -r "$DBP/$FILE_MAX_VAL" ]; then
+  print_error "File '$DBP/$FILE_MAX_VAL' does not have read permissions"
+fi
 
+if [ ! -r "$DBP/$FILE_VAL" ]; then
+  print_error "File '$DBP/$FILE_VAL' does not have read permissions"
+fi
+
+if [ ! -w "$DBP/$FILE_VAL" ]; then
+  print_error "File '$DBP/$FILE_VAL' does not have write permissions"
+fi
+
+# Set global var MAX_BRIGHT
+MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")"
+
+# Set global var ACT_BRIGHT
+ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     
+
+# Perform the desired action
 case "$WTD" in
   1) get_bright "$ARG";;
   2) inc_bright "$ARG";;
