@@ -71,14 +71,6 @@ check_perms() {
   fi
 }
 
-max_bright() {
-  MAX_BRIGHT="$(cat "$1/$FILE_MAX_VAL")"
-}
-
-act_bright() {
-  ACT_BRIGHT="$(cat "$1/$FILE_VAL")"
-}
-
 val_to_use() {
   if [ "$1" -gt 100 ] || [ "$1" -lt 0 ]; then
     print_error "Possible values are 0 ... 100"
@@ -134,9 +126,11 @@ get_param_arg() {
   echo "$2"
 }
 
+
 # ------------------------
 # Main "function"
 # ------------------------
+
 trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
 
 DBP="$DEF_SYS_BL/$DEF_DEVICE" # Set global var DBP (default)
@@ -183,8 +177,8 @@ fi
 
 check_perms "$DBP" # Checks SYS permissions
 
-max_bright "$DBP"  # Sets global var MAX_BRIGHT
-act_bright "$DBP"  # Sets global var ACT_BRIGHT
+MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")" # Sets global var MAX_BRIGHT
+ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"     # Sets global var ACT_BRIGHT
 
 case "$WTD" in
   1) get_bright "$ARG";;
