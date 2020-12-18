@@ -126,81 +126,69 @@ set_bright() {
   val_to_use "$1" > "$DBP/$FILE_VAL"
 }
 
-main() {
-  DBP="$DEF_SYS_BL/$DEF_DEVICE" # Set global var DBP (default)
-
-  WTD=0  # What To Do
-  ARG=-1 # Flag's Argument (if any)
-
-trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
-  while [ "$#" -gt 0 ]; do
-    case "$1" in
-      -get)
-        WTD=1
-
-        if [ -n "$2" ] && [ "$(printf '%s' "$2" | cut -c 1)" != "-" ]; then
-          ARG="$2"
-          shift
-        fi
-      ;;
-      -inc)
-        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
-          print_error "Argument for '$1' is missing"
-        fi
-
-        WTD=2
-        ARG="$2"
-        shift
-      ;;
-      -dec)
-        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
-          print_error "Argument for '$1' is missing"
-        fi
-
-        WTD=3
-        ARG="$2"
-        shift
-      ;;
-      -set)
-        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
-          print_error "Argument for '$1' is missing"
-        fi
-        
-        WTD=4
-        ARG="$2"
-        shift
-      ;;
-      -d)
-        if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
-          print_error "Argument for '$1' is missing"
-        fi
-        
-        DBP="$DEF_SYS_BL/$2" # Set global var DBP (custom)
-        shift
-      ;;
-      -help);;
-      -version) echo $VERSION; exit 0;;
-      -?*) print_error "Unknown flag '$1'";;
-      *) break;;
-    esac
-    shift
-  done
-
-  if [ "$WTD" -eq 0 ]; then
-    print_help
+get_param_arg() {
+  if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+    print_error "Argument for '$1' flag is missing"
   fi
 
-  check_perms "$DBP" # Checks SYS permissions
-
-  max_bright "$DBP"  # Sets global var MAX_BRIGHT
-  act_bright "$DBP"  # Sets global var ACT_BRIGHT
-
-  case "$WTD" in
-    1) get_bright "$ARG";;
-    2) inc_bright "$ARG";;
-    3) dec_bright "$ARG";;
-    4) set_bright "$ARG";;
-  esac
+  echo "$2"
 }
 
-main "$@"
+# ------------------------
+# Main "function"
+# ------------------------
+trap "exit 1" USR1 # Exec "exit 1" when SIGUSR1
+
+DBP="$DEF_SYS_BL/$DEF_DEVICE" # Set global var DBP (default)
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -get)
+      WTD=1
+      if [ -n "$2" ] && [ "$(printf '%s' "$2" | cut -c 1)" != "-" ]; then
+        ARG="$2"
+        shift
+      fi
+    ;;
+    -inc)
+      WTD=2
+      ARG=$( get_param_arg "$1" "$2" )
+      shift
+    ;;
+    -dec)
+      WTD=3
+      ARG=$( get_param_arg "$1" "$2" )
+      shift
+    ;;
+    -set)
+      WTD=4
+      ARG=$( get_param_arg "$1" "$2" )
+      shift
+    ;;
+    -d)
+      DBP="$DEF_SYS_BL/$( get_param_arg "$1" "$2" )" # Set global var DBP (custom)
+      shift
+    ;;
+    -help);;
+    -version) echo $VERSION; exit 0;;
+    -?*) print_error "Unknown flag '$1'";;
+    *) break;;
+  esac
+  shift
+done
+
+if [ -z "$WTD" ]; then
+  print_help
+fi
+
+check_perms "$DBP" # Checks SYS permissions
+
+max_bright "$DBP"  # Sets global var MAX_BRIGHT
+act_bright "$DBP"  # Sets global var ACT_BRIGHT
+
+case "$WTD" in
+  1) get_bright "$ARG";;
+  2) inc_bright "$ARG";;
+  3) dec_bright "$ARG";;
+  4) set_bright "$ARG";;
+esac
