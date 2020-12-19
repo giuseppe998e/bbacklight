@@ -59,7 +59,7 @@ show_version() {
   if [ -n "$GH_VER" ]; then
     GH_VER="$( echo "$GH_VER" | grep -o -E "\"name\": \".+\"" | head -n 1 | cut -d "\"" -f 4 )"
 
-    if [ "$GH_VER" != "$VERSION" ]; then
+    if [ "$GH_VER" != "v$VERSION" ]; then
       echo "$VERSION (Different version available: $GH_VER)"
       exit 0
     fi
