@@ -51,12 +51,13 @@ EOF
 
 show_version() {
   if command -v curl > /dev/null 2>&1; then
-    GH_VER="$( curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/giuseppe998e/bbacklight/tags )"
+    GH_VER="curl -s -H"
   elif command -v wget > /dev/null 2>&1; then
-    GH_VER="$( wget -q -O - --header "Accept: application/vnd.github.v3+json" https://api.github.com/repos/giuseppe998e/bbacklight/tags )"
+    GH_VER="wget -q -O - --header"
   fi
 
   if [ -n "$GH_VER" ]; then
+    GH_VER="$( $GH_VER "Accept: application/vnd.github.v3+json" https://api.github.com/repos/giuseppe998e/bbacklight/tags )"
     GH_VER="$( echo "$GH_VER" | grep -o -E "\"name\": \".+\"" | head -n 1 | cut -d "\"" -f 4 )"
 
     if [ "$GH_VER" != "v$VERSION" ]; then
