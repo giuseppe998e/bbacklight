@@ -10,7 +10,7 @@
 # Constants
 # ------------------------
 
-VERSION=1.1.5
+VERSION=1.1.6
 PROCESS=$$
 
 FILE_MAX_VAL="max_brightness"
