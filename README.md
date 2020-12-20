@@ -72,5 +72,5 @@ Usage: bbacklight <command>
       Set the brightness to a percentage value decided by the user
   -d <device>
       Choose which device to change the brightness or request the current value
-      Default device is 'acpi_video0'
+      The default device is the first entry of dir '/sys/class/backlight'
 ```
