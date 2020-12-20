@@ -7,4 +7,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run shellcheck
-        run: shellcheck -s sh bbacklight
+        run: shellcheck -e SC2012 -s sh bbacklight
