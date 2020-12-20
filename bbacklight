@@ -206,10 +206,10 @@ if [ ! -w "$DBP/$FILE_VAL" ]; then
 fi
 
 # Set global var MAX_BRIGHT
-MAX_BRIGHT="$(cat "$DBP/$FILE_MAX_VAL")"
+MAX_BRIGHT="$( head -n 1 "$DBP/$FILE_MAX_VAL" )"
 
 # Set global var ACT_BRIGHT
-ACT_BRIGHT="$(cat "$DBP/$FILE_VAL")"
+ACT_BRIGHT="$( head -n 1 "$DBP/$FILE_VAL" )"
 
 # Perform the desired action
 case "$WTD" in
