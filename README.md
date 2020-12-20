@@ -34,7 +34,7 @@ $ sudo groupadd bbacklight
 $ echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"<device>\", RUN+=\"/bin/chgrp bbacklight /sys/class/backlight/%k/brightness\"" | sudo tee -a /etc/udev/rules.d/bbacklight.rules
 $ echo "ACTION==\"add\", SUBSYSTEM==\"backlight\", KERNEL==\"<device>\", RUN+=\"/bin/chmod g+w /sys/class/backlight/%k/brightness\"" | sudo tee -a /etc/udev/rules.d/bbacklight.rules
 $ sudo usermod -aG bbacklight $USER
-$ sudo udevadm control --reload-rules && sudo udevadm trigger # or reboot
+$ reboot # or "sudo udevadm control --reload-rules && sudo udevadm trigger"
 ```
 Where `<device>` should be replaced with the device you want to use (ex. `acpi_video0` or `intel_backlight`).
 
