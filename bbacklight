@@ -17,7 +17,7 @@ FILE_MAX_VAL="max_brightness"
 FILE_VAL="brightness"
 
 DEF_SYS_BL="/sys/class/backlight"
-DEF_DEVICE="acpi_video0"
+DEF_DEVICE="$( ls "$DEF_SYS_BL" | head -n 1 )"
 
 
 # ------------------------
