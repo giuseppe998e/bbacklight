@@ -87,7 +87,7 @@ print_error() {
 }
 
 get_opt_arg() {
-  if [ -z "$2" ] || [ "$(printf '%s' "$2" | cut -c 1)" = "-" ]; then
+  if [ -z "$2" ] || [ "$( printf '%s' "$2" | cut -c 1 )" = "-" ]; then
     print_error "Argument for '$1' option is missing"
   fi
 
@@ -162,7 +162,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     -get)
       WTD=1
-      if [ -n "$2" ] && [ "$(printf '%s' "$2" | cut -c 1)" != "-" ]; then
+      if [ -n "$2" ] && [ "$( printf '%s' "$2" | cut -c 1 )" != "-" ]; then
         ARG="$2"
         shift
       fi
