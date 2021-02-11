@@ -47,7 +47,7 @@ $ sudo mv bbacklight /usr/bin/
 
 ## Configuration
 The program is set by default to use the first entry in the `/sys/class/backlight` directory.  
-To change this behavior, edit the program with a text editor, setting the `DEF_DEVICE` variable with an entry/device of your choice (ex.`DEF_DEVICE="acpi_video0"` Or `DEF_DEVICE="intel_backlight"`).  
+To change this behavior, edit the program with a text editor, set the `DEF_DEVICE` variable with an entry/device of your choice (ex.`DEF_DEVICE="acpi_video0"` or `DEF_DEVICE="intel_backlight"`).  
 Otherwise you can use the `-d <DEVICE>` option.
 
 
