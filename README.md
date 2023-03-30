@@ -7,7 +7,7 @@
 <h4 align="center">When xbacklight doesn't want to collaborate</h4>
 <p align="center">
   <a href="https://github.com/giuseppe998e/bbacklight/actions?query=workflow%3AShellcheck">
-    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/giuseppe998e/bbacklight/Shellcheck?style=flat-square">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/giuseppe998e/bbacklight/main.yml?branch=main&style=flat-square">
   </a> 
   <a href="https://github.com/giuseppe998e/bbacklight/blob/main/LICENSE">
     <img alt="GitHub License" src="https://img.shields.io/github/license/giuseppe998e/bbacklight?style=flat-square">
